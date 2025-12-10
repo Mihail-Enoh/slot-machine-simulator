@@ -3,12 +3,34 @@
 total_score=0
 
 function init {
-    # remove already existing source files
-    mkdir -p build
-    rm -rf build/*
+    echo "Initializing build..."
 
-    rsync -av --ignore-existing ../src/ .
+    # create clean build directory
+    rm -rf build
+    mkdir -p build
+
+    # copy ALL source files from src/ to build/
+    cp -r ../src/* build/
+
+    # compile inside build/
+    cd build
+
+    # run make clean if exists
+    if make clean 2>/dev/null; then
+        echo "Ran make clean"
+    fi
+
+    # run normal make
+    if make; then
+        echo "Build successful!"
+    else
+        echo "Build failed!"
+        exit 1
+    fi
+
+    cd ..
 }
+
 
 # Function to run the Python checker script
 function run_python_checker {
